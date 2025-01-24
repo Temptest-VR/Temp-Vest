@@ -52,24 +52,24 @@ void setPeltierPower(int pin, int power) {
 }
 
 
+WiFiClient client;
+
 void loop() {
-    WiFiClient client = server.available();  // Check for incoming clients
-
-
-    if (client) {
-        Serial.println("Client connected");
-
-        while (client.connected()) {
-            if (client.available()) {
-                String message = client.readStringUntil('\n');  // Read message until newline
-                Serial.print("Received: ");
-                Serial.println(message);
-
-                client.println("ACK");  // Send acknowledgment
-            }
+    if (!client || !client.connected()) {
+        client = server.available();  // Accept new client connection only if not already connected
+        if (client) {
+            Serial.println("Client connected");
         }
+    }
 
-        Serial.println("Client disconnected");
-        client.stop();
+    if (client && client.connected()) {
+        if (client.available()) {
+            String message = client.readStringUntil('\n');  // Read message until newline
+            Serial.print("Received: ");
+            Serial.println(message);
+            client.println("ACK");  // Send acknowledgment
+        }
     }
 }
+
+

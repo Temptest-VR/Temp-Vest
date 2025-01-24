@@ -67,6 +67,21 @@ void loop() {
             String message = client.readStringUntil('\n');  // Read message until newline
             Serial.print("Received: ");
             Serial.println(message);
+
+            // Split the message by space and store the values
+            int spaceIndex1 = message.indexOf(' ');
+            int spaceIndex2 = message.indexOf(' ', spaceIndex1 + 1);
+            int spaceIndex3 = message.indexOf(' ', spaceIndex2 + 1);
+
+            int p1_power = message.substring(0, spaceIndex1).toInt();
+            int p2_power = message.substring(spaceIndex1 + 1, spaceIndex2).toInt();
+            int p3_power = message.substring(spaceIndex2 + 1, spaceIndex3).toInt();
+            int p4_power = message.substring(spaceIndex3 + 1).toInt();
+
+            // Debug: print out the split values
+            Serial.print("Peltier Power Values: ");
+            run_peltiers(p1_power, p2_power, p3_power, p4_power);
+
             client.println("ACK");  // Send acknowledgment
         }
     }

@@ -1,4 +1,6 @@
 import socket
+import random
+import time
 
 
 class PeltierClient:
@@ -10,7 +12,7 @@ class PeltierClient:
 
     def send_command(self, p1, p2, p3, p4, p5, p6):
         try:
-            command = f"{p1},{p2},{p3},{p4}, {p5}, {p6}\n"
+            command = f"{p1} {p2} {p3} {p4} {p5} {p6}\n"
             self.socket.sendall(command.encode())
             response = self.socket.recv(1024).decode().strip()
             print("ESP32 Response:", response)
@@ -29,8 +31,17 @@ if __name__ == "__main__":
 
     try:
         while True:
-            p1, p2, p3, p4, p5, p6 = map(int, input("Enter power values (p1 p2 p3 p4 p5 p6): ").split())
+            p1 = random.randint(-0, 100)
+            p2 = random.randint(0, 100)
+            p3 = random.randint(0, 100)
+            p4 = random.randint(0, 100)
+            p5 = random.randint(0, 100)
+            p6 = random.randint(0, 100)
+
+            print(f"Sending: {p1}, {p2}, {p3}, {p4}, {p5}, {p6}")
             client.send_command(p1, p2, p3, p4, p5, p6)
+
+         #   time.sleep(0.1)  # Adjust delay as needed
     except KeyboardInterrupt:
         print("Closing connection...")
     finally:

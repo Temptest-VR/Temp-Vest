@@ -19,12 +19,12 @@ const char* password = "12345678";  // Replace with your WiFi password
 
 WiFiServer server(80);
 
-const int peltier_1_pin = 5;
-const int peltier_2_pin = 6;
-const int peltier_3_pin = 7;
-const int peltier_4_pin = 8;
-const int peltier_5_pin = 9;
-const int peltier_6_pin = 10;
+const int peltier_1_pin = 1;
+const int peltier_2_pin = 10;
+const int peltier_3_pin = 18;
+const int peltier_4_pin = 4;
+const int peltier_5_pin = 19;
+const int peltier_6_pin = 7;
 
 const int PWM_FREQ = 500;
 const int PWM_RESOLUTION = 8;

@@ -2,11 +2,26 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Sngty;
+using TMPro;
 using UnityEngine;
 
 public class SingularityManagerUnity : MonoBehaviour
 {
-    [SerializeField] private SingularityManager singularityManager;
+    public static SingularityManagerUnity instance;
+    public SingularityManager singularityManager;
+    [SerializeField] private SingularityDebug singularityDebug;
+
+    private void Start()
+    {
+        if (instance == null)
+        {
+            instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
 
     public void OnConnected()
     {
@@ -16,6 +31,10 @@ public class SingularityManagerUnity : MonoBehaviour
     public void OnMessageReceived(string message)
     {
         Debug.Log($"Received {message}");
+        if (singularityDebug != null)
+        {
+            singularityDebug.DebugUI(message);
+        }
     }
 
     private void OnDestroy()
@@ -23,8 +42,8 @@ public class SingularityManagerUnity : MonoBehaviour
         singularityManager.DisconnectDevice();
     }
 
-    void Update()
+    public void SendMessage(string message)
     {
-        singularityManager.sendMessage("0, 1, 2, 3, 4, 5");
+        singularityManager.sendMessage(message);
     }
 }

@@ -8,9 +8,9 @@ class PeltierClient:
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.socket.connect((host, port))
 
-    def send_command(self, p1, p2, p3, p4):
+    def send_command(self, p1, p2, p3, p4, p5, p6):
         try:
-            command = f"{p1},{p2},{p3},{p4}\n"
+            command = f"{p1},{p2},{p3},{p4}, {p5}, {p6}\n"
             self.socket.sendall(command.encode())
             response = self.socket.recv(1024).decode().strip()
             print("ESP32 Response:", response)
@@ -29,8 +29,8 @@ if __name__ == "__main__":
 
     try:
         while True:
-            p1, p2, p3, p4 = map(int, input("Enter power values (p1 p2 p3 p4): ").split())
-            client.send_command(p1, p2, p3, p4)
+            p1, p2, p3, p4, p5, p6 = map(int, input("Enter power values (p1 p2 p3 p4 p5 p6): ").split())
+            client.send_command(p1, p2, p3, p4, p5, p6)
     except KeyboardInterrupt:
         print("Closing connection...")
     finally:

@@ -23,6 +23,8 @@ const int peltier_1_pin = 5;
 const int peltier_2_pin = 6;
 const int peltier_3_pin = 7;
 const int peltier_4_pin = 8;
+const int peltier_5_pin = 9;
+const int peltier_6_pin = 10;
 
 const int PWM_FREQ = 500;
 const int PWM_RESOLUTION = 8;
@@ -42,7 +44,7 @@ void setup() {
         for (;;);
     }
     display.clearDisplay();
-    display.setTextSize(1);
+    display.setTextSize(1.6);
     display.setTextColor(SSD1306_WHITE);
     display.setCursor(0, 0);
     display.println("Connecting to WiFi...");
@@ -67,17 +69,19 @@ void setup() {
     server.begin();
 }
 
-void run_peltiers(int p1_power, int p2_power, int p3_power, int p4_power) {
+void run_peltiers(int p1_power, int p2_power, int p3_power, int p4_power, int p5_power, int p6_power) {
     Serial.printf("Running Peltiers: P1=%d, P2=%d, P3=%d, P4=%d\n", p1_power, p2_power, p3_power, p4_power);
     setPeltierPower(peltier_1_pin, p1_power);
     setPeltierPower(peltier_2_pin, p2_power);
     setPeltierPower(peltier_3_pin, p3_power);
     setPeltierPower(peltier_4_pin, p4_power);
+    setPeltierPower(peltier_5_pin, p5_power);
+    setPeltierPower(peltier_6_pin, p6_power);
     
     display.clearDisplay();
     display.setCursor(0, 0);
     display.println("Peltier Power:");
-    display.printf("P1: %d\nP2: %d\nP3: %d\nP4: %d\n", p1_power, p2_power, p3_power, p4_power);
+    display.printf("P1: %d\nP2: %d\nP3: %d\nP4: %d\nP5: %d\nP6: %d\n", p1_power, p2_power, p3_power, p4_power, p5_power, p6_power);
     display.display();
 }
 
@@ -106,13 +110,18 @@ void loop() {
             int spaceIndex1 = message.indexOf(' ');
             int spaceIndex2 = message.indexOf(' ', spaceIndex1 + 1);
             int spaceIndex3 = message.indexOf(' ', spaceIndex2 + 1);
+            int spaceIndex4 = message.indexOf(' ', spaceIndex3 + 1);
+            int spaceIndex5 = message.indexOf(' ', spaceIndex4 + 1);
 
             int p1_power = message.substring(0, spaceIndex1).toInt();
             int p2_power = message.substring(spaceIndex1 + 1, spaceIndex2).toInt();
             int p3_power = message.substring(spaceIndex2 + 1, spaceIndex3).toInt();
-            int p4_power = message.substring(spaceIndex3 + 1).toInt();
+            int p4_power = message.substring(spaceIndex3 + 1, spaceIndex4).toInt();
+            int p5_power = message.substring(spaceIndex4 + 1, spaceIndex5).toInt();
+            int p6_power = message.substring(spaceIndex5 + 1).toInt();
 
-            run_peltiers(p1_power, p2_power, p3_power, p4_power);
+
+            run_peltiers(p1_power, p2_power, p3_power, p4_power, p5_power, p6_power);
             client.println("ACK");
         }
     }

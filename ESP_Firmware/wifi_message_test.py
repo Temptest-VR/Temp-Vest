@@ -15,7 +15,7 @@ def send_random_data():
         client_socket.connect((SERVER_ADDRESS, PORT))
 
         # Generate random numbers for power values
-        power_values = [random.randint(0, 255) for _ in range(6)]
+        power_values = [random.randint(-100, 100) for _ in range(6)]
 
         # Format the message as a string with space-separated values
         message = ' '.join(map(str, power_values)) + '\n'

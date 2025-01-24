@@ -40,7 +40,8 @@ const int max_power = 255; // Assuming the power range is 0-255
 int loops = 0;
 
 
-
+const int therm1_pin = 33;
+int therm1_value = 0;
 
 
 void setup() {
@@ -50,6 +51,15 @@ void setup() {
     pinMode(peltier_2_pin, OUTPUT);
     pinMode(peltier_3_pin, OUTPUT);
     pinMode(peltier_4_pin, OUTPUT);
+    pinMode(peltier_5_pin, OUTPUT);
+    pinMode(peltier_6_pin, OUTPUT);
+    
+    pinMode(peltier_1_reverse, OUTPUT);
+    pinMode(peltier_2_reverse, OUTPUT);
+    pinMode(peltier_3_reverse, OUTPUT);
+    pinMode(peltier_4_reverse, OUTPUT);
+    pinMode(peltier_5_reverse, OUTPUT);
+    pinMode(peltier_6_reverse, OUTPUT);
 
     Wire.begin(SDA_PIN, SCL_PIN);  // Set custom I2C pins
 
@@ -97,6 +107,7 @@ void run_peltiers(int p1_power, int p2_power, int p3_power, int p4_power, int p5
     display.println("P4: " + String(p4_power));
     display.println("P5: " + String(p5_power));
     display.println("P6: " + String(p6_power));
+    display.print("therm" + String(analogRead(therm1_pin)));
     display.display();
 }
 
@@ -107,6 +118,11 @@ void setPeltierPower(int pin, int power) {
     if (power < 0) {
       Serial.println("Reversing temp!"); // trigger relay sequence
     }
+}
+
+void flipPeltierPower(int pin){
+
+  digitalWrite(pin, HIGH); 
 }
 
 

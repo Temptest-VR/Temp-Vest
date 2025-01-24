@@ -57,14 +57,15 @@ void setup() {
     display.display();
 
     WiFi.softAP(ssid, password);
-    Serial.println("Access Point Started2");
+    Serial.println("Access Point Started");
     Serial.print("IP Address: ");
     Serial.println(WiFi.softAPIP());
 
     display.clearDisplay();
     display.setCursor(0, 0);
-    display.println("WiFi Connected");
-    display.println(WiFi.localIP());
+    display.println("Access Point Started");
+    display.println("Set up with IP:");
+    display.println(WiFi.softAPIP());
     display.display();
 
     server.begin();

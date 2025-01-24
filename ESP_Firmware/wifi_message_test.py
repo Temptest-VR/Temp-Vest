@@ -31,7 +31,7 @@ if __name__ == "__main__":
 
     try:
         while True:
-            p1 = random.randint(-0, 100)
+            p1 = random.randint(0, 100)
             p2 = random.randint(0, 100)
             p3 = random.randint(0, 100)
             p4 = random.randint(0, 100)

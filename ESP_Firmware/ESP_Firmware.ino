@@ -19,12 +19,19 @@ const char* password = "12345678";  // Replace with your WiFi password
 
 WiFiServer server(80);
 
-const int peltier_1_pin = 1;
-const int peltier_2_pin = 10;
-const int peltier_3_pin = 18;
-const int peltier_4_pin = 4;
-const int peltier_5_pin = 19;
-const int peltier_6_pin = 7;
+const int peltier_1_pin = 4;
+const int peltier_2_pin = 18;
+const int peltier_3_pin = 19;
+const int peltier_4_pin = 10;
+const int peltier_5_pin = 1;
+const int peltier_6_pin = 0;
+
+const int peltier_1_reverse = 21;
+const int peltier_2_reverse = 20;
+const int peltier_3_reverse = 9;
+const int peltier_4_reverse = 7;
+const int peltier_5_reverse = 6;
+const int peltier_6_reverse = 5;
 
 const int PWM_FREQ = 500;
 const int PWM_RESOLUTION = 8;
@@ -47,18 +54,12 @@ void setup() {
     display.setTextSize(1.6);
     display.setTextColor(SSD1306_WHITE);
     display.setCursor(0, 0);
-    display.println("Connecting to WiFi...");
     display.display();
 
-    WiFi.begin(ssid, password);
-    Serial.print("Connecting to WiFi");
-    while (WiFi.status() != WL_CONNECTED) {
-        delay(1000);
-        Serial.print(".");
-    }
-    Serial.println("\nConnected to WiFi");
-    Serial.print("ESP32 IP: ");
-    Serial.println(WiFi.localIP());
+    WiFi.softAP(ssid, password);
+    Serial.println("Access Point Started2");
+    Serial.print("IP Address: ");
+    Serial.println(WiFi.softAPIP());
 
     display.clearDisplay();
     display.setCursor(0, 0);
@@ -89,6 +90,9 @@ void setPeltierPower(int pin, int power) {
     int duty_cycle = map(abs(power), 0, 100, 0, 255);
     Serial.printf("Setting pin %d to duty cycle %d\n", pin, duty_cycle);
     analogWrite(pin, duty_cycle);
+    if (power < 0) {
+      Serial.println("Reversing temp!"); // trigger relay sequence
+    }
 }
 
 WiFiClient client;

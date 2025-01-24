@@ -1,4 +1,11 @@
 #include <Arduino.h>
+#include <WiFi.h>
+
+const char* ssid = "TempVest";      // Replace with your WiFi SSID
+const char* password = "12345678";  // Replace with your WiFi password
+
+WiFiServer server(80);  // Create a server on port 80
+
 
 const int peltier_1_pin = 5;
 const int peltier_2_pin = 6;
@@ -15,6 +22,19 @@ void setup() {
     pinMode(peltier_2_pin, OUTPUT);
     pinMode(peltier_3_pin, OUTPUT);
     pinMode(peltier_4_pin, OUTPUT);
+
+    WiFi.begin(ssid, password);
+
+    Serial.print("Connecting to WiFi");
+    while (WiFi.status() != WL_CONNECTED) {
+        delay(1000);
+        Serial.print(".");
+    }
+    Serial.println("\nConnected to WiFi");
+    Serial.print("ESP32 IP: ");
+    Serial.println(WiFi.localIP());
+
+    server.begin();  // Start the server
 }
 
 void run_peltiers(int p1_power, int p2_power, int p3_power, int p4_power) {
@@ -31,6 +51,25 @@ void setPeltierPower(int pin, int power) {
     analogWrite(pin, duty_cycle);
 }
 
+
 void loop() {
-  run_peltiers(20, 15, 100, 0);
+    WiFiClient client = server.available();  // Check for incoming clients
+
+
+    if (client) {
+        Serial.println("Client connected");
+
+        while (client.connected()) {
+            if (client.available()) {
+                String message = client.readStringUntil('\n');  // Read message until newline
+                Serial.print("Received: ");
+                Serial.println(message);
+
+                client.println("ACK");  // Send acknowledgment
+            }
+        }
+
+        Serial.println("Client disconnected");
+        client.stop();
+    }
 }

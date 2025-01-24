@@ -128,7 +128,6 @@ void flipPeltierPower(int pin){
 
 void loop() {
   WiFiClient client = server.available();
-  loops++;
   
   if (client) {
     Serial.println("Client connected!");  // Add this

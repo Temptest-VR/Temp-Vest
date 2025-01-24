@@ -9,8 +9,8 @@
 #define OLED_RESET -1  // Reset pin (not used)
 #define OLED_ADDR 0x3C  // I2C address for OLED
 
-#define SDA_PIN 3
-#define SCL_PIN 2
+#define SDA_PIN 22
+#define SCL_PIN 21
 
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 
@@ -19,31 +19,27 @@ const char* password = "12345678";  // Replace with your WiFi password
 
 WiFiServer server(80);
 
-const int peltier_1_pin = 4;
-const int peltier_2_pin = 18;
-const int peltier_3_pin = 19;
-const int peltier_4_pin = 10;
-const int peltier_5_pin = 1;
-const int peltier_6_pin = 5;
+const int peltier_1_pin = 2;
+const int peltier_2_pin = 15;
+const int peltier_3_pin = 0;
+const int peltier_4_pin = 4;
+const int peltier_5_pin = 16;
+const int peltier_6_pin = 17;
 
-const int peltier_1_reverse = 21;
-const int peltier_2_reverse = 20;
-const int peltier_3_reverse = 9;
-const int peltier_4_reverse = 7;
-const int peltier_5_reverse = 6;
-const int peltier_6_reverse = 0;
+const int peltier_1_reverse = 5;
+const int peltier_2_reverse = 18;
+const int peltier_3_reverse = 19;
+const int peltier_4_reverse = 12;
+const int peltier_5_reverse = 27;
+const int peltier_6_reverse = 26;
 
 const int PWM_FREQ = 10;
-const int PWM_RESOLUTION = 16;
+const int PWM_RESOLUTION = 8;
 const int max_power = 255; // Assuming the power range is 0-255
 
-// Function to draw a horizontal bar for power levels
-void drawBar(int x, int y, int value, int max_value) {
-  int bar_length = map(value, 0, max_value, 0, 128); // Map value to screen width (128)
- // display.println("P " + value);
-  display.fillRect(x, y, bar_length, 1, WHITE); // Draw filled bar
-  display.drawRect(x, y, 128, 3, WHITE); // Draw bar outline
-}
+int loops = 0;
+
+
 
 
 
@@ -92,13 +88,15 @@ void run_peltiers(int p1_power, int p2_power, int p3_power, int p4_power, int p5
     
     display.clearDisplay();
     display.setCursor(0, 0);
-    display.println("Peltier Power:");
-    drawBar(0, 20, p1_power, max_power);
-    drawBar(0, 30, p2_power, max_power);
-    drawBar(0, 40, p3_power, max_power);
-    drawBar(0, 50, p4_power, max_power);
-    drawBar(0, 60, p5_power, max_power);
-    drawBar(0, 70, p6_power, max_power);
+    display.println("Peltier Power Values:");
+
+    // Print each Peltier power value on a new line
+    display.println("P1: " + String(p1_power));
+    display.println("P2: " + String(p2_power));
+    display.println("P3: " + String(p3_power));
+    display.println("P4: " + String(p4_power));
+    display.println("P5: " + String(p5_power));
+    display.println("P6: " + String(p6_power));
     display.display();
 }
 
@@ -111,39 +109,35 @@ void setPeltierPower(int pin, int power) {
     }
 }
 
-WiFiClient client;
 
 void loop() {
-    if (!client || !client.connected()) {
-        client = server.available();
-        if (client) {
-            Serial.println("Client connected");
-        }
+  WiFiClient client = server.available();
+  loops++;
+  
+  if (client) {
+    Serial.println("Client connected!");  // Add this
+    while (client.connected()) {
+      String message = client.readStringUntil('\n');
+      Serial.print("Received: ");
+      Serial.println(message);
+
+      int spaceIndex1 = message.indexOf(' ');
+      int spaceIndex2 = message.indexOf(' ', spaceIndex1 + 1);
+      int spaceIndex3 = message.indexOf(' ', spaceIndex2 + 1);
+      int spaceIndex4 = message.indexOf(' ', spaceIndex3 + 1);
+      int spaceIndex5 = message.indexOf(' ', spaceIndex4 + 1);
+
+      int p1_power = message.substring(0, spaceIndex1).toInt();
+      int p2_power = message.substring(spaceIndex1 + 1, spaceIndex2).toInt();
+      int p3_power = message.substring(spaceIndex2 + 1, spaceIndex3).toInt();
+      int p4_power = message.substring(spaceIndex3 + 1, spaceIndex4).toInt();
+      int p5_power = message.substring(spaceIndex4 + 1, spaceIndex5).toInt();
+      int p6_power = message.substring(spaceIndex5 + 1).toInt();
+
+
+      run_peltiers(p1_power, p2_power, p3_power, p4_power, p5_power, p6_power);
     }
-
-    if (client) {
-        if (client.connected()) {
-            String message = client.readStringUntil('\n');
-            Serial.print("Received: ");
-            Serial.println(message);
-
-            int spaceIndex1 = message.indexOf(' ');
-            int spaceIndex2 = message.indexOf(' ', spaceIndex1 + 1);
-            int spaceIndex3 = message.indexOf(' ', spaceIndex2 + 1);
-            int spaceIndex4 = message.indexOf(' ', spaceIndex3 + 1);
-            int spaceIndex5 = message.indexOf(' ', spaceIndex4 + 1);
-
-            int p1_power = message.substring(0, spaceIndex1).toInt();
-            int p2_power = message.substring(spaceIndex1 + 1, spaceIndex2).toInt();
-            int p3_power = message.substring(spaceIndex2 + 1, spaceIndex3).toInt();
-            int p4_power = message.substring(spaceIndex3 + 1, spaceIndex4).toInt();
-            int p5_power = message.substring(spaceIndex4 + 1, spaceIndex5).toInt();
-            int p6_power = message.substring(spaceIndex5 + 1).toInt();
-
-
-            run_peltiers(p1_power, p2_power, p3_power, p4_power, p5_power, p6_power);
-            // client.println("ACK");
-        }
-    }
+    Serial.println("Client disconnected");  // Add this
     client.stop();
+  }
 }

@@ -24,17 +24,28 @@ const int peltier_2_pin = 18;
 const int peltier_3_pin = 19;
 const int peltier_4_pin = 10;
 const int peltier_5_pin = 1;
-const int peltier_6_pin = 0;
+const int peltier_6_pin = 5;
 
 const int peltier_1_reverse = 21;
 const int peltier_2_reverse = 20;
 const int peltier_3_reverse = 9;
 const int peltier_4_reverse = 7;
 const int peltier_5_reverse = 6;
-const int peltier_6_reverse = 5;
+const int peltier_6_reverse = 0;
 
-const int PWM_FREQ = 500;
-const int PWM_RESOLUTION = 8;
+const int PWM_FREQ = 10;
+const int PWM_RESOLUTION = 16;
+const int max_power = 255; // Assuming the power range is 0-255
+
+// Function to draw a horizontal bar for power levels
+void drawBar(int x, int y, int value, int max_value) {
+  int bar_length = map(value, 0, max_value, 0, 128); // Map value to screen width (128)
+ // display.println("P " + value);
+  display.fillRect(x, y, bar_length, 1, WHITE); // Draw filled bar
+  display.drawRect(x, y, 128, 3, WHITE); // Draw bar outline
+}
+
+
 
 void setup() {
     Serial.begin(115200);
@@ -67,7 +78,6 @@ void setup() {
     display.println("Set up with IP:");
     display.println(WiFi.softAPIP());
     display.display();
-
     server.begin();
 }
 
@@ -83,7 +93,12 @@ void run_peltiers(int p1_power, int p2_power, int p3_power, int p4_power, int p5
     display.clearDisplay();
     display.setCursor(0, 0);
     display.println("Peltier Power:");
-    display.printf("P1: %d\nP2: %d\nP3: %d\nP4: %d\nP5: %d\nP6: %d\n", p1_power, p2_power, p3_power, p4_power, p5_power, p6_power);
+    drawBar(0, 20, p1_power, max_power);
+    drawBar(0, 30, p2_power, max_power);
+    drawBar(0, 40, p3_power, max_power);
+    drawBar(0, 50, p4_power, max_power);
+    drawBar(0, 60, p5_power, max_power);
+    drawBar(0, 70, p6_power, max_power);
     display.display();
 }
 
@@ -106,8 +121,8 @@ void loop() {
         }
     }
 
-    if (client && client.connected()) {
-        if (client.available()) {
+    if (client) {
+        if (client.connected()) {
             String message = client.readStringUntil('\n');
             Serial.print("Received: ");
             Serial.println(message);
@@ -127,7 +142,8 @@ void loop() {
 
 
             run_peltiers(p1_power, p2_power, p3_power, p4_power, p5_power, p6_power);
-            client.println("ACK");
+            // client.println("ACK");
         }
     }
+    client.stop();
 }

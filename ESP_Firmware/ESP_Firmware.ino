@@ -14,56 +14,47 @@
 
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 
-const char* ssid = "TempVest";      // Replace with your WiFi SSID
-const char* password = "12345678";  // Replace with your WiFi password
+const char* ssid = "TempVest";
+const char* password = "12345678";
 
 WiFiServer server(80);
 
 const int peltier_1_pin = 0;
-const int peltier_2_pin = 15;
-
+const int peltier_2_pin = 17;
 const int peltier_1_reverse = 16;
 const int peltier_2_reverse = 18;
+const int therm_1_pin = 34;
+const int therm_2_pin = 35;
 
-
-const int PWM_FREQ = 100;
-const int PWM_RESOLUTION = 16;
-const int max_power = 255; // Assuming the power range is 0-255
-
-int loops = 0;
-
-
-const int therm1_pin = 33;
-int therm1_value = 0;
-
+bool p_1_stop = false;
+bool p_2_stop = false;
+const int temp_threshold = 2300;
+int last_p1_power = 0;
+int last_p2_power = 0;
 
 void setup() {
     Serial.begin(115200);
-
     pinMode(peltier_1_pin, OUTPUT);
     pinMode(peltier_2_pin, OUTPUT);
-    
     pinMode(peltier_1_reverse, OUTPUT);
     pinMode(peltier_2_reverse, OUTPUT);
-
-
-    Wire.begin(SDA_PIN, SCL_PIN);  // Set custom I2C pins
-
+    Wire.begin(SDA_PIN, SCL_PIN);
+    
     if (!display.begin(SSD1306_SWITCHCAPVCC, OLED_ADDR)) {
         Serial.println("SSD1306 initialization failed!");
         for (;;);
     }
     display.clearDisplay();
-    display.setTextSize(1.6);
+    display.setTextSize(1);
     display.setTextColor(SSD1306_WHITE);
     display.setCursor(0, 0);
     display.display();
-
+    
     WiFi.softAP(ssid, password);
     Serial.println("Access Point Started");
     Serial.print("IP Address: ");
     Serial.println(WiFi.softAPIP());
-
+    
     display.clearDisplay();
     display.setCursor(0, 0);
     display.println("Access Point Started");
@@ -73,54 +64,64 @@ void setup() {
     server.begin();
 }
 
-void setPeltierPower(int pwmPin, int lowPin, int power) {
-    int duty_cycle = map(abs(power), 0, 100, 0, 255);  // Corrected mapping
-    Serial.println(duty_cycle);
+void setPeltierPower(int pwmPin, int lowPin, int power, bool stop) {
+    if (stop) {
+        analogWrite(pwmPin, 0);
+        analogWrite(lowPin, 0);
+        return;
+    }
+    
+    int duty_cycle = map(abs(power), 0, 100, 0, 255);
     if (power > 0) {
         analogWrite(pwmPin, duty_cycle);
-        analogWrite(lowPin, 0);  // Ensure the reverse pin is OFF
+        analogWrite(lowPin, 0);
     } else if (power < 0) {
-        analogWrite(pwmPin, 0);  // Ensure the forward pin is OFF
+        analogWrite(pwmPin, 0);
         analogWrite(lowPin, duty_cycle);
-        
     } else {
         analogWrite(pwmPin, 0);
         analogWrite(lowPin, 0);
     }
 }
 
-
-void run_peltiers(int p1_power, int p2_power) {
-    Serial.printf("Running Peltiers: P1=%d, P2=%d", p1_power, p2_power);
+void checkTemperature() {
+    int therm_1_value = analogRead(therm_1_pin);
+    int therm_2_value = analogRead(therm_2_pin);
     
-    setPeltierPower(peltier_1_pin, peltier_1_reverse, p1_power);
-    setPeltierPower(peltier_2_pin, peltier_2_reverse, p2_power);
+    p_1_stop = therm_1_value > temp_threshold;
+    p_2_stop = therm_2_value > temp_threshold;
+    
+    Serial.printf("Therm1: %d, Therm2: %d, P1 Stop: %d, P2 Stop: %d\n", therm_1_value, therm_2_value, p_1_stop, p_2_stop);
+    
+    setPeltierPower(peltier_1_pin, peltier_1_reverse, last_p1_power, p_1_stop);
+    setPeltierPower(peltier_2_pin, peltier_2_reverse, last_p2_power, p_2_stop);
 }
 
-
-
-
 void loop() {
-  WiFiClient client = server.available();
-  
-  if (client) {
-    Serial.println("Client connected!");  // Add this
-    while (client.connected()) {
-      String message = client.readStringUntil('\n');
-      Serial.print("Received: ");
-      Serial.println(message);
-
-      int spaceIndex1 = message.indexOf(' ');
-      int spaceIndex2 = message.indexOf(' ', spaceIndex1 + 1);
-
-      int p1_power = message.substring(0, spaceIndex1).toInt();
-      int p2_power = message.substring(spaceIndex1 + 1, spaceIndex2).toInt();
-
-
-
-      run_peltiers(p1_power, p2_power);
+    checkTemperature();
+    
+    WiFiClient client = server.available();
+    if (client) {
+        Serial.println("Client connected!");
+        while (client.connected()) {
+            if (client.available()) {
+                String message = client.readStringUntil('\n');
+                Serial.print("Received: ");
+                Serial.println(message);
+                
+                int spaceIndex1 = message.indexOf(' ');
+                int spaceIndex2 = message.indexOf(' ', spaceIndex1 + 1);
+                int p1_power = message.substring(0, spaceIndex1).toInt();
+                int p2_power = message.substring(spaceIndex1 + 1, spaceIndex2).toInt();
+                
+                last_p1_power = p1_power;
+                last_p2_power = p2_power;
+                
+                setPeltierPower(peltier_1_pin, peltier_1_reverse, p1_power, p_1_stop);
+                setPeltierPower(peltier_2_pin, peltier_2_reverse, p2_power, p_2_stop);
+            }
+        }
+        Serial.println("Client disconnected");
+        client.stop();
     }
-    Serial.println("Client disconnected");  // Add this
-    client.stop();
-  }
 }

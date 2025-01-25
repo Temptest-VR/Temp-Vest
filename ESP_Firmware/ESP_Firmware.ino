@@ -32,6 +32,11 @@ const int temp_threshold = 2300;
 int last_p1_power = 0;
 int last_p2_power = 0;
 
+
+int p1_power = 0;
+int p2_power = 0;
+
+
 void setup() {
     Serial.begin(115200);
     pinMode(peltier_1_pin, OUTPUT);
@@ -65,19 +70,21 @@ void setup() {
 }
 
 void setPeltierPower(int pwmPin, int lowPin, int power, bool stop) {
-    if (stop) {
+    if (stop && power > 0) {
         analogWrite(pwmPin, 0);
         analogWrite(lowPin, 0);
         return;
     }
     
     int duty_cycle = map(abs(power), 0, 100, 0, 255);
+
     if (power > 0) {
-        analogWrite(pwmPin, duty_cycle);
-        analogWrite(lowPin, 0);
-    } else if (power < 0) {
         analogWrite(pwmPin, 0);
         analogWrite(lowPin, duty_cycle);
+
+    } else if (power < 0) {
+        analogWrite(pwmPin, duty_cycle);
+        analogWrite(lowPin, 0);
     } else {
         analogWrite(pwmPin, 0);
         analogWrite(lowPin, 0);
@@ -93,8 +100,8 @@ void checkTemperature() {
     
     Serial.printf("Therm1: %d, Therm2: %d, P1 Stop: %d, P2 Stop: %d\n", therm_1_value, therm_2_value, p_1_stop, p_2_stop);
     
-    setPeltierPower(peltier_1_pin, peltier_1_reverse, last_p1_power, p_1_stop);
-    setPeltierPower(peltier_2_pin, peltier_2_reverse, last_p2_power, p_2_stop);
+    setPeltierPower(peltier_1_pin, peltier_1_reverse, p1_power, p_1_stop);
+    setPeltierPower(peltier_2_pin, peltier_2_reverse, p2_power, p_2_stop);
 }
 
 void loop() {
@@ -111,8 +118,8 @@ void loop() {
                 
                 int spaceIndex1 = message.indexOf(' ');
                 int spaceIndex2 = message.indexOf(' ', spaceIndex1 + 1);
-                int p1_power = message.substring(0, spaceIndex1).toInt();
-                int p2_power = message.substring(spaceIndex1 + 1, spaceIndex2).toInt();
+                p1_power = message.substring(0, spaceIndex1).toInt();
+                p2_power = message.substring(spaceIndex1 + 1, spaceIndex2).toInt();
                 
                 last_p1_power = p1_power;
                 last_p2_power = p2_power;

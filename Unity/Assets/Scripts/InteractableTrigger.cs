@@ -6,6 +6,10 @@ public class InteractableTrigger : MonoBehaviour
 {
     public void Selected(string input)
     {
-        SingularityManagerUnity.instance.SendMessage(input);
+        if (SingularityManagerUnity.instance == null)
+        {
+            SingularityManagerUnity.instance = FindObjectOfType<SingularityManagerUnity>();
+        }
+        SingularityManagerUnity.instance.singularityManager.sendMessage(input);
     }
 }

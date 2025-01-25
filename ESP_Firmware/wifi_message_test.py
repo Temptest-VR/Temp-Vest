@@ -29,6 +29,6 @@ def send_random_data():
 if __name__ == "__main__":
     while True:
         send_random_data()
-        time.sleep(0.1)  # Wait for 1 second before sending again
+        time.sleep(0.5)  # Wait for 1 second before sending again
 
 

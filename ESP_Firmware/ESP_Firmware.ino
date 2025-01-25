@@ -87,48 +87,35 @@ void setup() {
     server.begin();
 }
 
-void run_peltiers(int p1_power, int p2_power, int p3_power, int p4_power, int p5_power, int p6_power) {
-    Serial.printf("Running Peltiers: P1=%d, P2=%d, P3=%d, P4=%d, P5=%d, P6=%d\n", p1_power, p2_power, p3_power, p4_power, p5_power, p6_power);
-
-    if !String(analogRead(therm1_pin)) < 1300 || String(analogRead(therm1_pin)) > 1800) { // placeholder values. NEED TO CALIBRATE!!!
-      setPeltierPower(peltier_1_pin, p1_power);
-    } // lower as heat up
-    
-    setPeltierPower(peltier_2_pin, p2_power);
-    setPeltierPower(peltier_3_pin, p3_power);
-    setPeltierPower(peltier_4_pin, p4_power);
-    setPeltierPower(peltier_5_pin, p5_power);
-    setPeltierPower(peltier_6_pin, p6_power);
-    
-    display.clearDisplay();
-    display.setCursor(0, 0);
-    display.println("Peltier Power Values:");
-
-    // Print each Peltier power value on a new line
-    display.println("P1: " + String(p1_power));
-    display.println("P2: " + String(p2_power));
-    display.println("P3: " + String(p3_power));
-    display.println("P4: " + String(p4_power));
-    display.println("P5: " + String(p5_power));
-    display.println("P6: " + String(p6_power));
-    display.print("therm" + String(analogRead(therm1_pin)));
-    display.display();
-}
-
-void setPeltierPower(int pin, int power) {
-    int duty_cycle = map(abs(power), 0, 100, 0, 255);
-
-    Serial.printf("Setting pin %d to duty cycle %d\n", pin, duty_cycle);
-    analogWrite(pin, duty_cycle);
-    if (power < 0) {
-      Serial.println("Reversing temp!"); // trigger relay sequence
+void setPeltierPower(int pwmPin, int lowPin, int power) {
+    int duty_cycle = map(abs(power), 0, 255, 0, 255);
+    Serial.println(power);
+    if (power > 0) {
+        analogWrite(pwmPin, duty_cycle);
+        analogWrite(lowPin, 0);  // Ensure the reverse pin is OFF
+    } else if (power < 0) {
+        analogWrite(pwmPin, 0);  // Ensure the forward pin is OFF
+        analogWrite(lowPin, duty_cycle);
+        
+    } else {
+        analogWrite(pwmPin, 0);
+        analogWrite(lowPin, 0);
     }
 }
 
-void flipPeltierPower(int pin){
 
-  digitalWrite(pin, HIGH); 
+void run_peltiers(int p1_power, int p2_power, int p3_power, int p4_power, int p5_power, int p6_power) {
+    Serial.printf("Running Peltiers: P1=%d, P2=%d, P3=%d, P4=%d, P5=%d, P6=%d\n", p1_power, p2_power, p3_power, p4_power, p5_power, p6_power);
+    
+    setPeltierPower(peltier_1_pin, peltier_1_reverse, p1_power);
+    setPeltierPower(peltier_2_pin, peltier_2_reverse, p2_power);
+    setPeltierPower(peltier_3_pin, peltier_3_reverse, p3_power);
+    setPeltierPower(peltier_4_pin, peltier_4_reverse, p4_power);
+    setPeltierPower(peltier_5_pin, peltier_5_reverse, p5_power);
+    setPeltierPower(peltier_6_pin, peltier_6_reverse, p6_power);
 }
+
+
 
 
 void loop() {

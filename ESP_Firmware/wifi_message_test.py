@@ -1,24 +1,40 @@
 import socket
 import random
+import time
 
-ESP_IP = "192.168.4.1"  # Default SoftAP IP of ESP32
-ESP_PORT = 80  # Port defined in the ESP32 code
+# Define the server address and port
+SERVER_ADDRESS = '192.168.4.1'
+PORT = 80
 
+# Flag to toggle flip-flop mode
+flip_flop_mode = True  # Set to False for random behavior
 
-def send_command():
-    p1, p2, p3, p4, p5, p6 = 255, 255, 255, 255, 255, 255, #[random.randint(0, 100) for _ in range(6)]
-    command = f"{p1} {p2} {p3} {p4} {p5} {p6}\n"
+# Flip-flop state tracking
+flip_flop = [False] * 6
 
-    try:
-        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-            s.connect((ESP_IP, ESP_PORT))
-            s.sendall(command.encode())
-            response = s.recv(1024).decode()
-            print(f"Sent: {command.strip()} | ESP Response: {response}")
-    except Exception as e:
-        print("Connection error:", e)
+# Function to send power values to the server
+def send_power_data():
+    global flip_flop
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as client_socket:
+        client_socket.connect((SERVER_ADDRESS, PORT))
 
+        if flip_flop_mode:
+            # Flip-flop between -100 and 100
+            power_values = [100 if state else -100 for state in flip_flop]
+            # Toggle the states for next iteration
 
-while True:
-    send_command()
+            flip_flop = [not state for state in flip_flop]
+        else:
+            # Generate random numbers for power values
+            power_values = [random.randint(-100, 100) for _ in range(6)]
 
+        # Format and send the message
+        message = ' '.join(map(str, power_values)) + '\n'
+        client_socket.sendall(message.encode())
+        print(f"Sent: {message.strip()}")
+
+# Main loop to send data every second
+if __name__ == "__main__":
+    while True:
+        send_power_data()
+        time.sleep(3)  # Wait for 1 second before sending again

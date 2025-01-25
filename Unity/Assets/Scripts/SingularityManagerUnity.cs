@@ -41,9 +41,4 @@ public class SingularityManagerUnity : MonoBehaviour
     {
         singularityManager.DisconnectDevice();
     }
-
-    public void SendMessage(string message)
-    {
-        singularityManager.sendMessage(message);
-    }
 }

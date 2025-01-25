@@ -20,7 +20,7 @@ def send_power_data():
 
         if flip_flop_mode:
             # Flip-flop between -100 and 100
-            power_values = [100 if state else -100 for state in flip_flop]
+            power_values = [75 if state else -100 for state in flip_flop]
             # Toggle the states for next iteration
 
             flip_flop = [not state for state in flip_flop]
@@ -37,4 +37,4 @@ def send_power_data():
 if __name__ == "__main__":
     while True:
         send_power_data()
-        time.sleep(3)  # Wait for 1 second before sending again
+        time.sleep(12)  # Wait for 1 second before sending again

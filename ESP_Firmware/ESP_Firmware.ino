@@ -33,8 +33,8 @@ const int peltier_4_reverse = 12;
 const int peltier_5_reverse = 27;
 const int peltier_6_reverse = 26;
 
-const int PWM_FREQ = 20;
-const int PWM_RESOLUTION = 8;
+const int PWM_FREQ = 100;
+const int PWM_RESOLUTION = 16;
 const int max_power = 255; // Assuming the power range is 0-255
 
 int loops = 0;
@@ -88,8 +88,8 @@ void setup() {
 }
 
 void setPeltierPower(int pwmPin, int lowPin, int power) {
-    int duty_cycle = map(abs(power), 0, 255, 0, 255);
-    Serial.println(power);
+    int duty_cycle = map(abs(power), 0, 100, 0, 255);  // Corrected mapping
+    Serial.println(duty_cycle);
     if (power > 0) {
         analogWrite(pwmPin, duty_cycle);
         analogWrite(lowPin, 0);  // Ensure the reverse pin is OFF

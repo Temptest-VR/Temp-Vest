@@ -10,6 +10,11 @@ public class SingularityManagerUnity : MonoBehaviour
     public static SingularityManagerUnity instance;
     public SingularityManager singularityManager;
     [SerializeField] private SingularityDebug singularityDebug;
+    [SerializeField] private float updateSingularityTimer = 0.2f;
+    private float lastTimeSinceSingularityUpdate = 0f;
+    private float time  = 0.0f;
+    private int leftHandValue = 0;
+    private int rightHandValue = 0;
 
     private void Start()
     {
@@ -20,6 +25,16 @@ public class SingularityManagerUnity : MonoBehaviour
         else
         {
             Destroy(gameObject);
+        }
+    }
+
+    private void Update()
+    {
+        time += Time.deltaTime;
+        if (time > lastTimeSinceSingularityUpdate + updateSingularityTimer)
+        {
+            lastTimeSinceSingularityUpdate = time;
+            SendSingularityMessage();
         }
     }
 
@@ -40,5 +55,42 @@ public class SingularityManagerUnity : MonoBehaviour
     private void OnDestroy()
     {
         singularityManager.DisconnectAll();
+    }
+
+    public void UpdateLeftHandValue(int value)
+    {
+        leftHandValue = value;
+    }
+
+    public void UpdateRightHandValue(int value)
+    {
+        rightHandValue = value;
+    }
+
+    public void UpdateBothHandValue(int leftValue, int rightValue)
+    {
+        leftHandValue = leftValue;
+        rightHandValue = rightValue;
+    }
+
+    private void SendSingularityMessage()
+    {
+        if (leftHandValue > 100)
+        {
+            leftHandValue = 100;
+        }
+        if (leftHandValue < -100)
+        {
+            leftHandValue = -100;
+        }
+        if (rightHandValue > 100)
+        {
+            rightHandValue = 100;
+        }
+        if (rightHandValue < -100)
+        {
+            rightHandValue = -100;
+        }
+        singularityManager.sendMessage(leftHandValue + " " + rightHandValue);
     }
 }

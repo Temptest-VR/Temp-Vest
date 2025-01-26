@@ -18,8 +18,6 @@ public class DebugOrbsManager : MonoBehaviour
     [SerializeField] private Transform rightController;
     private int leftHandValue = 0;
     private int rightHandValue = 0;
-    private float singularityUpdateDelay = 0.5f;
-    private float sendMessageSingularityQueueTime = 0;
     // private GrabInteractable hotGrabInteractable;
     // private GrabInteractable coldGrabInteractable;
 
@@ -39,7 +37,6 @@ public class DebugOrbsManager : MonoBehaviour
 
     void Update()
     {
-        sendMessageSingularityQueueTime += Time.deltaTime;
         if (isDebugging)
         {
             UpdateTemperatureValue();
@@ -47,11 +44,7 @@ public class DebugOrbsManager : MonoBehaviour
             string rightOrbText = rightHandValue.ToString();
             Debug.Log("left value: " + leftOrbText + "right value: " + rightOrbText);
             DebugConsole.instance.Log("left value: " + leftOrbText + ", right value: " + rightOrbText);
-            if (sendMessageSingularityQueueTime >= singularityUpdateDelay)
-            {
-                SingularityManagerUnity.instance.singularityManager.sendMessage(leftOrbText + " " + rightOrbText);
-                sendMessageSingularityQueueTime = 0;
-            }
+            SingularityManagerUnity.instance.UpdateBothHandValue(leftHandValue, rightHandValue);
         }
 
         isDebugging = transform.GetChild(0).gameObject.activeSelf;

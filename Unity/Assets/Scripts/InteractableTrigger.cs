@@ -10,6 +10,7 @@ public class InteractableTrigger : MonoBehaviour
         {
             SingularityManagerUnity.instance = FindObjectOfType<SingularityManagerUnity>();
         }
-        SingularityManagerUnity.instance.singularityManager.sendMessage(input);
+        // Deprecated. Use SingularityManagerUnity SendSingularityMessage instead
+        // SingularityManagerUnity.instance.singularityManager.sendMessage(input);
     }
 }

@@ -33,11 +33,13 @@ public class SelectionDestroyAnimation : MonoBehaviour
     {
         if (destroyStarted)
         {
+            SingularityManagerUnity.instance.UpdateBothHandValue(0, 0);
             time += Time.deltaTime;
             transform.localScale = new Vector3(transform.localScale.x - time / 1000f, transform.localScale.y - time / 1000f, transform.localScale.z - time / 1000f);
             material.SetColor("_BaseColor", new Color(material.color.r, material.color.g, material.color.b, (destroyAnimationDuration - time) / destroyAnimationDuration));
             if (destroyStarted && time >= destroyAnimationDuration)
             {
+                SingularityManagerUnity.instance.UpdateBothHandValue(0, 0);
                 spawnDespawnTransition.TransitionToggleOn();
                 spawnDespawnTransition.TransitionToggleOff();
                 material.color = new Color(material.color.r, material.color.g, material.color.b, 1);

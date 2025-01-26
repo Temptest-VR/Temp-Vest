@@ -10,31 +10,30 @@ PORT = 80
 flip_flop_mode = True  # Set to False for random behavior
 
 # Flip-flop state tracking
-flip_flop = [False] * 6
+flip_flop = [False] * 2
 
 # Function to send power values to the server
-def send_power_data():
+def send_power_data(client_socket):
     global flip_flop
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as client_socket:
-        client_socket.connect((SERVER_ADDRESS, PORT))
 
-        if flip_flop_mode:
-            # Flip-flop between -100 and 100
-            power_values = [100 if state else -100 for state in flip_flop]
-            # Toggle the states for next iteration
+    if flip_flop_mode:
+        # Flip-flop between -100 and 100
+        power_values = [100 if state else 100 for state in flip_flop]
+        # Toggle the states for next iteration
+        flip_flop = [not state for state in flip_flop]
+    else:
+        # Generate random numbers for power values
+        power_values = [random.randint(-100, 100) for _ in range(2)]
 
-            flip_flop = [not state for state in flip_flop]
-        else:
-            # Generate random numbers for power values
-            power_values = [random.randint(-100, 100) for _ in range(2)]
-
-        # Format and send the message
-        message = ' '.join(map(str, power_values)) + '\n'
-        client_socket.sendall(message.encode())
-        print(f"Sent: {message.strip()}")
+    # Format and send the message
+    message = ' '.join(map(str, power_values)) + '\n'
+    client_socket.sendall(message.encode())
+    print(f"Sent: {message.strip()}")
 
 # Main loop to send data every second
 if __name__ == "__main__":
-    while True:
-        send_power_data()
-        time.sleep(20)  # Wait for 1 second before sending again
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as client_socket:
+        client_socket.connect((SERVER_ADDRESS, PORT))
+        while True:
+            send_power_data(client_socket)
+            time.sleep(0.1)  # Wait for 20 seconds before sending again

@@ -28,7 +28,7 @@ const int therm_2_pin = 35;
 
 bool p_1_stop = false;
 bool p_2_stop = false;
-const int temp_threshold = 2300;
+const int temp_threshold = 2700;
 int last_p1_power = 0;
 int last_p2_power = 0;
 
@@ -105,13 +105,14 @@ void checkTemperature() {
 }
 
 void loop() {
-    checkTemperature();
+    
     
     WiFiClient client = server.available();
     if (client) {
         Serial.println("Client connected!");
         while (client.connected()) {
             if (client.available()) {
+                checkTemperature();
                 String message = client.readStringUntil('\n');
                 Serial.print("Received: ");
                 Serial.println(message);

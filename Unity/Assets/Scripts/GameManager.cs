@@ -5,10 +5,10 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
+    public Transform mainCamera;
     [SerializeField] private AudioManager audioManager;
     [SerializeField] private OVRPassthroughLayer layer;
     [SerializeField] private List<GameObject> transitionPrefabs = new List<GameObject>();
-    [SerializeField] private Transform mainCamera;
     private int transitionIndex = 0;
     public static GameManager instance;
     private float time = 0f;
@@ -30,7 +30,7 @@ public class GameManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
-        NextTransition();
+        // NextTransition();
     }
 
     private void Update()

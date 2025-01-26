@@ -66,7 +66,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3602399169261946662}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e9a7676b01585ce43908639a27765dfc, type: 3}
   m_Name: 
@@ -158,18 +158,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 1
-      - m_Target: {fileID: 5429520529495577092}
-        m_TargetAssemblyTypeName: InteractableTrigger, Assembly-CSharp
-        m_MethodName: Selected
-        m_Mode: 5
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 1, 1
-          m_BoolArgument: 0
-        m_CallState: 1
       - m_Target: {fileID: 5112652556726812846}
         m_TargetAssemblyTypeName: UnityEngine.AudioSource, UnityEngine
         m_MethodName: PlayOneShot
@@ -186,18 +174,6 @@ MonoBehaviour:
   _whenUnselect:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 5429520529495577092}
-        m_TargetAssemblyTypeName: InteractableTrigger, Assembly-CSharp
-        m_MethodName: Selected
-        m_Mode: 5
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 0, 0
-          m_BoolArgument: 0
-        m_CallState: 1
       - m_Target: {fileID: 5112652556726812846}
         m_TargetAssemblyTypeName: UnityEngine.AudioSource, UnityEngine
         m_MethodName: PlayOneShot
@@ -358,8 +334,9 @@ GameObject:
   - component: {fileID: 4317166484562335109}
   - component: {fileID: 2070438253147375354}
   - component: {fileID: 6225552514014568242}
+  - component: {fileID: 8798654288296543799}
   m_Layer: 0
-  m_Name: Transition4
+  m_Name: TransitionDebugOrb
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -478,7 +455,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 0
+  m_CollisionDetection: 2
 --- !u!114 &2070438253147375354
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -493,7 +470,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   destroyAnimationDuration: 2
   nextPassThroughState: 0
-  startDebuggingOrbs: 1
+  spawnDespawnTransition: {fileID: 8798654288296543799}
+  defaultMaterial: {fileID: 2100000, guid: 6a1f34de4b0119941a71b42489e2be86, type: 2}
 --- !u!82 &6225552514014568242
 AudioSource:
   m_ObjectHideFlags: 0
@@ -590,3 +568,17 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &8798654288296543799
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5344508258295004938}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c5f7ca54c086b3540bc47a003f644cdc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  toggleObjectsOn: []
+  toggleObjectsOff: []

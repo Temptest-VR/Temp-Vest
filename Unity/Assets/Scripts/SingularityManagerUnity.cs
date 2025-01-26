@@ -39,6 +39,6 @@ public class SingularityManagerUnity : MonoBehaviour
 
     private void OnDestroy()
     {
-        singularityManager.DisconnectDevice();
+        singularityManager.DisconnectAll();
     }
 }

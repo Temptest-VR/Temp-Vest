@@ -472,6 +472,7 @@ MonoBehaviour:
   nextPassThroughState: 0
   spawnDespawnTransition: {fileID: 8798654288296543799}
   defaultMaterial: {fileID: 2100000, guid: 6a1f34de4b0119941a71b42489e2be86, type: 2}
+  defaultPosition: {x: -0.3, y: 1, z: 0.3}
 --- !u!82 &6225552514014568242
 AudioSource:
   m_ObjectHideFlags: 0

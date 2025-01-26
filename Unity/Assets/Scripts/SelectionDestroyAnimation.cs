@@ -10,6 +10,7 @@ public class SelectionDestroyAnimation : MonoBehaviour
     [SerializeField] private bool nextPassThroughState = false;
     [SerializeField] private SpawnDespawnTransition spawnDespawnTransition;
     [SerializeField] private Material defaultMaterial;
+    [SerializeField] private Vector3 defaultPosition;
     private bool destroyStarted = false;
     private float time = 0f;
     private MeshRenderer meshRenderer;
@@ -43,7 +44,8 @@ public class SelectionDestroyAnimation : MonoBehaviour
                 // GameManager.instance.NextTransition();
                 // GameManager.instance.PasssthhroughToggle(nextPassThroughState);
                 destroyStarted = false;
-                transform.position = GameManager.instance.mainCamera.transform.position + GameManager.instance.mainCamera.transform.forward * 0.7f + new Vector3(0, -0.2f, 0);
+                transform.position = defaultPosition;
+                // transform.position = GameManager.instance.mainCamera.transform.position + GameManager.instance.mainCamera.transform.forward * 0.7f + new Vector3(0, -0.2f, 0);
                 transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
                 transform.rotation = Quaternion.Euler(0f, 45f, 45f);
                 transform.GetComponent<Rigidbody>().velocity = Vector3.zero;

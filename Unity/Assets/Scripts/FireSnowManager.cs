@@ -6,12 +6,13 @@ using Oculus.Interaction.Input;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Serialization;
 
-public class DebugOrbsManager : MonoBehaviour
+public class FireSnowManager : MonoBehaviour
 {
     public bool isDebugging = false;
-    [SerializeField] private Transform OrbControllerHot;
-    [SerializeField] private Transform OrbControllerCold;
+    [SerializeField] private Transform ControllerFire;
+    [SerializeField] private Transform ControllerSnow;
     [SerializeField] private float thresdhold = 0.3f;
     [SerializeField] private Transform leftController;
     [SerializeField] private Transform rightController;
@@ -25,7 +26,7 @@ public class DebugOrbsManager : MonoBehaviour
             UpdateTemperatureValue();
             string leftOrbText = leftHandValue.ToString();
             string rightOrbText = rightHandValue.ToString();
-            // Debug.Log("left value: " + leftOrbText + "right value: " + rightOrbText);
+            Debug.Log("left value: " + leftOrbText + "right value: " + rightOrbText);
             DebugConsole.instance.Log("left value: " + leftOrbText + ", right value: " + rightOrbText);
             SingularityManagerUnity.instance.UpdateBothHandValue(leftHandValue, rightHandValue);
         }
@@ -36,15 +37,15 @@ public class DebugOrbsManager : MonoBehaviour
     public void StartDebugging()
     {
         isDebugging = true;
-        OrbControllerHot.gameObject.SetActive(true);
-        OrbControllerCold.gameObject.SetActive(true);
+        ControllerFire.gameObject.SetActive(true);
+        ControllerSnow.gameObject.SetActive(true);
     }
 
     public void StopDebugging()
     {
         isDebugging = false;
-        OrbControllerHot.gameObject.SetActive(false);
-        OrbControllerCold.gameObject.SetActive(false);
+        ControllerFire.gameObject.SetActive(false);
+        ControllerSnow.gameObject.SetActive(false);
     }
 
     private void UpdateTemperatureValue()
@@ -53,22 +54,26 @@ public class DebugOrbsManager : MonoBehaviour
         int leftHandValueCold = 0;
         int rightHandValueHot = 0;
         int rightHandValueCold = 0;
+        Vector3 controllerFireNormalized = new Vector3(ControllerFire.position.x, 0f, ControllerFire.position.z);
+        Vector3 controllerIceNormalized = new Vector3(ControllerSnow.position.x, 0f, ControllerSnow.position.z);
+        Vector3 leftHandNormalized = new Vector3(leftController.position.x, 0f, leftController.position.z);
+        Vector3 rightHandNormalized = new Vector3(rightController.position.x, 0f, rightController.position.z);
 
-        if (Vector3.Distance(OrbControllerHot.position, leftController.position) < thresdhold)
+        if (Vector3.Distance(controllerFireNormalized, leftHandNormalized) < thresdhold)
         {
-            leftHandValueHot = (int) ((thresdhold - Vector3.Distance(OrbControllerHot.position, leftController.position)) / thresdhold * 200);
+            leftHandValueHot = (int) ((thresdhold - Vector3.Distance(controllerFireNormalized, leftHandNormalized)) / thresdhold * 200);
         }
-        if (Vector3.Distance(OrbControllerCold.position, leftController.position) < thresdhold)
+        if (Vector3.Distance(controllerIceNormalized, leftHandNormalized) < thresdhold)
         {
-            leftHandValueCold = (int) ((thresdhold - Vector3.Distance(OrbControllerCold.position, leftController.position)) / thresdhold * 200);
+            leftHandValueCold = (int) ((thresdhold - Vector3.Distance(controllerIceNormalized, leftHandNormalized)) / thresdhold * 200);
         }
-        if (Vector3.Distance(OrbControllerHot.position, rightController.position) < thresdhold)
+        if (Vector3.Distance(controllerFireNormalized, rightHandNormalized) < thresdhold)
         {
-            rightHandValueHot = (int) ((thresdhold - Vector3.Distance(OrbControllerHot.position, rightController.position)) / thresdhold * 200);
+            rightHandValueHot = (int) ((thresdhold - Vector3.Distance(controllerFireNormalized, rightHandNormalized)) / thresdhold * 200);
         }
-        if (Vector3.Distance(OrbControllerCold.position, rightController.position) < thresdhold)
+        if (Vector3.Distance(controllerIceNormalized, rightHandNormalized) < thresdhold)
         {
-            rightHandValueCold = (int) ((thresdhold - Vector3.Distance(OrbControllerCold.position, rightController.position)) / thresdhold * 200);
+            rightHandValueCold = (int) ((thresdhold - Vector3.Distance(controllerIceNormalized, rightHandNormalized)) / thresdhold * 200);
         }
         
         leftHandValue = leftHandValueHot - leftHandValueCold;

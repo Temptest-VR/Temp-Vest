@@ -91,7 +91,7 @@ void setPeltierPower(int pwmPin, int lowPin, int power, bool stop) {
     }
 }
 
-void checkTemperature() {
+void checkTemperature(String message) {
     int therm_1_value = analogRead(therm_1_pin);
     int therm_2_value = analogRead(therm_2_pin);
     
@@ -99,9 +99,25 @@ void checkTemperature() {
     p_2_stop = therm_2_value > temp_threshold;
     
     Serial.printf("Therm1: %d, Therm2: %d, P1 Stop: %d, P2 Stop: %d\n", therm_1_value, therm_2_value, p_1_stop, p_2_stop);
-    
+
+    display.printf("Therm1: %d, P1 Stop: %d", therm_1_value, p_1_stop, p_2_stop);
+    display.printf("Therm2: %d, P2 Stop: %d\n", therm_2_value, p_2_stop);
+
+    display.clearDisplay();
+    display.setCursor(0, 0);
+    display.printf("Therm1: %d\n", therm_1_value);
+    display.println("P1 Stop: " + String(p_1_stop));
+    display.println("Power 1: " + String(p1_power));
+    display.printf("Therm1: %d\n", therm_2_value);
+    display.println("P2 Stop: " + String(p_2_stop));
+    display.println("Power 2: " + String(p2_power));
+    display.println("Message: " + String(message));
+    display.display();
+
+
     setPeltierPower(peltier_1_pin, peltier_1_reverse, p1_power, p_1_stop);
     setPeltierPower(peltier_2_pin, peltier_2_reverse, p2_power, p_2_stop);
+    
 }
 
 void loop() {
@@ -112,10 +128,11 @@ void loop() {
         Serial.println("Client connected!");
         while (client.connected()) {
             if (client.available()) {
-                checkTemperature();
+                
                 String message = client.readStringUntil('\n');
                 Serial.print("Received: ");
                 Serial.println(message);
+                checkTemperature(message);
                 
                 int spaceIndex1 = message.indexOf(' ');
                 int spaceIndex2 = message.indexOf(' ', spaceIndex1 + 1);

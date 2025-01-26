@@ -11,6 +11,7 @@ public class SingularityManagerUnity : MonoBehaviour
     public SingularityManager singularityManager;
     [SerializeField] private SingularityDebug singularityDebug;
     [SerializeField] private float updateSingularityTimer = 0.2f;
+    [SerializeField] private HapticsManager hapticsManager;
     private float lastTimeSinceSingularityUpdate = 0f;
     private float time  = 0.0f;
     private int leftHandValue = 0;
@@ -35,6 +36,23 @@ public class SingularityManagerUnity : MonoBehaviour
         {
             lastTimeSinceSingularityUpdate = time;
             SendSingularityMessage();
+        }
+        // Debug.Log("leftHandValue: " + leftHandValue + " rightHandValue: " + rightHandValue);
+        if (leftHandValue > 0)
+        {
+            hapticsManager.LeftAcceleratcorEngaged();
+        }
+        else
+        {
+            hapticsManager.LeftAcceletorDisengaged();
+        }
+        if (rightHandValue > 0)
+        {
+            hapticsManager.RightAcceleratorEngaged();
+        }
+        else
+        {
+            hapticsManager.RightAcceletorDisengaged();
         }
     }
 

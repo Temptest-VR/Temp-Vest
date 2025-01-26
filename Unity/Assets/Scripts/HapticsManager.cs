@@ -7,7 +7,11 @@ using UnityEngine;
 public class HapticsManager : MonoBehaviour
 {
     public static HapticsManager instance;
-    public HapticSource hapticSource;
+    public HapticSource hapticSourceLeft;
+    public HapticSource hapticSourceRight;
+    public bool leftPlaying = false;
+    public bool rightPlaying = false;
+    
     private void Start()
     {
         if (instance == null)
@@ -18,35 +22,38 @@ public class HapticsManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
-        hapticSource.priority = 0;
-        hapticSource.loop = true;
+        hapticSourceLeft.priority = 0;
+        hapticSourceLeft.loop = true;
+        hapticSourceRight.priority = 0;
+        hapticSourceRight.loop = true;
     }
 
-    public void LeftAcceleratorEngaged()
+    public void LeftAcceleratcorEngaged()
     {
-        hapticSource.Play(Controller.Left);
+        if (!leftPlaying)
+        {
+            hapticSourceLeft.Play();
+            leftPlaying = true;
+        }
     }
 
     public void RightAcceleratorEngaged()
     {
-        hapticSource.Play(Controller.Right);
-    }
-
-    public void AcceletorDisengaged()
-    {
-        hapticSource.Stop();
-    }
-    
-    public void AcceleratorPositionChanged(float acceleratorPosition)
-    {
-        if (0.0f > acceleratorPosition || acceleratorPosition > 1.0f)
+        if (!rightPlaying)
         {
-            return;
+            hapticSourceRight.Play();
+            rightPlaying = true;
         }
+    }
 
-        // amplitude is in a range of 0.0f to 1.0f
-        hapticSource.amplitude = acceleratorPosition;
-        // frequencyShift is in a range of -1.0f to 1.0f
-        hapticSource.frequencyShift = (acceleratorPosition * 2.0f) - 1.0f;
+    public void LeftAcceletorDisengaged()
+    {
+        leftPlaying = false;
+        hapticSourceLeft.Stop();
+    }
+    public void RightAcceletorDisengaged()
+    {
+        rightPlaying = false;
+        hapticSourceRight.Stop();
     }
 }

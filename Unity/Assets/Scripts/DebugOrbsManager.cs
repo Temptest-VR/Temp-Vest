@@ -9,7 +9,6 @@ using UnityEngine;
 
 public class DebugOrbsManager : MonoBehaviour
 {
-    public static DebugOrbsManager instance;
     public bool isDebugging = false;
     [SerializeField] private Transform OrbControllerHot;
     [SerializeField] private Transform OrbControllerCold;
@@ -20,20 +19,6 @@ public class DebugOrbsManager : MonoBehaviour
     private int rightHandValue = 0;
     // private GrabInteractable hotGrabInteractable;
     // private GrabInteractable coldGrabInteractable;
-
-    private void Start()
-    {
-        if (instance == null)
-        {
-            instance = this;
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
-        // hotGrabInteractable = OrbControllerHot.GetChild(0).GetComponent<GrabInteractable>();
-        // coldGrabInteractable = OrbControllerCold.GetChild(0).GetComponent<GrabInteractable>();
-    }
 
     void Update()
     {

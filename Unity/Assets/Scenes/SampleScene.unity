@@ -1114,6 +1114,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2483171112407822886, guid: f54012181eacade4ea242c65f804720f,
         type: 3}
+      propertyPath: _trackingOriginType
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2483171112407822886, guid: f54012181eacade4ea242c65f804720f,
+        type: 3}
       propertyPath: dynamicResolutionVersion
       value: 1
       objectReference: {fileID: 0}
@@ -2980,7 +2985,7 @@ PrefabInstance:
     - target: {fileID: 5344508258295004938, guid: cadfc394dde125d43bf6994496000b54,
         type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6752936964408119970, guid: cadfc394dde125d43bf6994496000b54,
         type: 3}
@@ -3593,6 +3598,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: TransitionFireDoorOpenTraining
+      objectReference: {fileID: 0}
+    - target: {fileID: 1000604636120778293, guid: 29702410829cb484f99b0ea8c6a20de7,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1526119722153421559, guid: 29702410829cb484f99b0ea8c6a20de7,
         type: 3}
@@ -4557,7 +4567,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1980054742
 Transform:
   m_ObjectHideFlags: 0
@@ -4587,7 +4597,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0362e4b37234d6340bc0168585fcd056, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isDebugging: 0
+  isDebugging: 1
   ControllerFire: {fileID: 7413309448698555512}
   ControllerSnow: {fileID: 7149004}
   thresdhold: 0.4
@@ -4745,6 +4755,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: TransitionFireSnow
+      objectReference: {fileID: 0}
+    - target: {fileID: 1000604636120778293, guid: 29702410829cb484f99b0ea8c6a20de7,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1526119722153421559, guid: 29702410829cb484f99b0ea8c6a20de7,
         type: 3}
